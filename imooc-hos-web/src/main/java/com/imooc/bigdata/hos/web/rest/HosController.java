@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.Enumeration;
@@ -24,7 +23,6 @@ import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,7 +36,6 @@ import com.imooc.bigdata.hos.common.HosHeaders;
 import com.imooc.bigdata.hos.common.HosObject;
 import com.imooc.bigdata.hos.common.HosObjectSummary;
 import com.imooc.bigdata.hos.common.ObjectListResult;
-import com.imooc.bigdata.hos.core.ErrorCodes;
 import com.imooc.bigdata.hos.core.usermgr.model.SystemRole;
 import com.imooc.bigdata.hos.core.usermgr.model.UserInfo;
 import com.imooc.bigdata.hos.server.IBucketService;
@@ -82,12 +79,13 @@ public class HosController extends BaseController {
       try {
         hosStoreService.createBucketStore(bucketName);
       } catch (IOException ioe) {
+        ioe.printStackTrace();
         bucketService.deleteBucket(bucketName);
-        return  "create bucket error";
+        return getError(500,"create bucket error");
       }
-      return "success";
+      return getSuccess(null,"success",null);
     }
-    return "PERMISSION DENIED";
+    return getError(500,"PERMISSION DENIED");
   }
 
   @RequestMapping(value = "bucket", method = RequestMethod.DELETE)
@@ -97,15 +95,16 @@ public class HosController extends BaseController {
       try {
         hosStoreService.deleteBucketStore(bucket);
       } catch (IOException ioe) {
-        return "delete bucket error";
+        return getError(500,"delete bucket error");
       }
       bucketService.deleteBucket(bucket);
-      return "success";
+      return getSuccess(null, "success",null);
     }
-    return "PERMISSION DENIED";
+    return getError(500,"PERMISSION DENIED");
   }
 
   @RequestMapping(value = "bucket", method = RequestMethod.PUT)
+  @ResponseBody
   public Object updateBucket(
       @RequestParam(name = "bucket") String bucket,
       @RequestParam(name = "detail") String detail) {
@@ -114,9 +113,9 @@ public class HosController extends BaseController {
     if (operationAccessControl
         .checkBucketOwner(currentUser.getUserName(), bucketModel.getBucketName())) {
       bucketService.updateBucket(bucket, detail);
-      return "success";
+      return getSuccess(null, "success",null);
     }
-    return "PERMISSION DENIED";
+    return getError(500,"PERMISSION DENIED");
   }
 
   @RequestMapping(value = "bucket", method = RequestMethod.GET)
@@ -125,9 +124,9 @@ public class HosController extends BaseController {
     BucketModel bucketModel = bucketService.getBucketByName(bucket);
     if (operationAccessControl
         .checkPermission(currentUser.getUserId(), bucketModel.getBucketName())) {
-      return bucketModel;
+      return getSuccess(bucketModel,"success",null);
     }
-    return "PERMISSION DENIED";
+    return getError(500,"PERMISSION DENIED");
 
   }
 
@@ -135,7 +134,7 @@ public class HosController extends BaseController {
   public Object getBucket() {
     UserInfo currentUser = ContextUtil.getCurrentUser();
     List<BucketModel> bucketModels = bucketService.getUserBuckets(currentUser.getUserId());
-    return bucketModels;
+    return getSuccess(bucketModels,"success",null);
   }
 
   @RequestMapping(value = "object", method = {RequestMethod.PUT, RequestMethod.POST})
@@ -150,7 +149,7 @@ public class HosController extends BaseController {
     if (!operationAccessControl.checkPermission(currentUser.getUserId(), bucket)) {
       response.setStatus(HttpStatus.SC_FORBIDDEN);
       response.getWriter().write("Permission denied");
-      return "Permission denied";
+      return getError(500,"PERMISSION DENIED");
     }
     if (!key.startsWith("/")) {
       response.setStatus(HttpStatus.SC_BAD_REQUEST);

@@ -43,7 +43,8 @@ public class HdfsServiceImpl implements IHdfsService {
     conf.addResource(new Path(confDir + "/hdfs-site.xml"));
 //    conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
 //    conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
-    fileSystem = FileSystem.get(new URI("hdfs://vm0:8020"), conf);
+    // fileSystem = FileSystem.get(new URI("hdfs://vm0:8020"), conf);
+    fileSystem = FileSystem.get(conf);
   }
 
   @Override
