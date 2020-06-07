@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,7 +20,7 @@ import com.imooc.bigdata.hos.core.authmgr.model.TokenInfo;
 import com.imooc.bigdata.hos.core.usermgr.IUserService;
 import com.imooc.bigdata.hos.core.usermgr.model.SystemRole;
 import com.imooc.bigdata.hos.core.usermgr.model.UserInfo;
-
+@CrossOrigin 
 @Component //（把普通pojo实例化到spring容器中，相当于配置文件中的<bean id="" class=""/>）
 public class SecurityInterceptor implements HandlerInterceptor {
 

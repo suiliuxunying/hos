@@ -155,12 +155,13 @@ public class HosController extends BaseController {
       response.setStatus(HttpStatus.SC_BAD_REQUEST);
       response.getWriter().write("object key must start with /");
     }
-
     Enumeration<String> headNames = request.getHeaderNames();
     Map<String, String> attrs = new HashMap<>();
     String contentEncoding = request.getHeader("content-encoding");
     if (contentEncoding != null) {
       attrs.put("content-encoding", contentEncoding);
+    }else{
+      attrs.put("content-encoding", "utf-8");
     }
     while (headNames.hasMoreElements()) {
       String header = headNames.nextElement();
@@ -168,12 +169,14 @@ public class HosController extends BaseController {
         attrs.put(header.replace(HosHeaders.COMMON_ATTR_PREFIX, ""), request.getHeader(header));
       }
     }
+    // return "success";
+
     ByteBuffer buffer = null;
     File distFile = null;
     try {
       //put dir object
       if (key.endsWith("/")) {
-        if (file != null) {
+        if (file != null) {   //新建目录 文件为空
           response.setStatus(HttpStatus.SC_BAD_REQUEST);
           file.getInputStream().close();
           return null;
