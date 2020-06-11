@@ -345,8 +345,13 @@ public class HosController extends BaseController {
     if (!operationAccessControl.checkPermission(currentUser.getUserId(), bucket)) {
       return  "PERMISSION DENIED";
     }
-    this.hosStoreService.deleteObject(bucket, key);
-    return "success";
+    try {
+      this.hosStoreService.deleteObject(bucket, key);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return getError(500, "dir is not empty");
+    }
+    return getSuccess(null,"success",null);
   }
 
   @RequestMapping(value = "object/content", method = RequestMethod.GET)
