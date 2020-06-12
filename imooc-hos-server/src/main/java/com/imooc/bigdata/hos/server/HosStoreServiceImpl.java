@@ -441,6 +441,7 @@ public class HosStoreServiceImpl implements IHosStoreService {
     if (key.endsWith("/")) {
       //check sub dir and current dir files.
       if (!isDirEmpty(bucket, key)) {
+        //这里直接抛出异常，前端聚就会触发err接收数据
         throw new RuntimeException("dir is not empty");
       }
       InterProcessMutex lock = null;

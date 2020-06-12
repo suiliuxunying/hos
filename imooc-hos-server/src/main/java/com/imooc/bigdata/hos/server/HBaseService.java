@@ -36,7 +36,7 @@ public class HBaseService {
    *
    * @param tableName tableName
    * @param cfs cfs
-   * @param splitKeys splitKeys
+   * @param splitKeys splitKeys 分区用？？
    * @return success of failed
    */
   public static boolean createTable(Connection connection, String tableName, String[] cfs,
@@ -307,7 +307,9 @@ public class HBaseService {
       FilterList filterList) {
     Result rs;
     try (Table table = connection.getTable(TableName.valueOf(tableName))) {
+      // row 目录名 rowkey开头吧
       Get g = new Get(Bytes.toBytes(row));
+      //设置过滤器
       g.setFilter(filterList);
       rs = table.get(g);
     } catch (IOException e) {
@@ -319,7 +321,7 @@ public class HBaseService {
   }
 
   /**
-   * getRow.
+   * getRow.（通过表名 拿到行  表名：XXXX+bucket）
    */
   public static Result getRow(Connection connection, String tableName, Get get) {
     Result rs;
@@ -334,7 +336,7 @@ public class HBaseService {
   }
 
   /**
-   * getRow.
+   * getRow.（通过 rowkey）
    */
   public static Result getRow(Connection connection, String tableName, String row) {
     Result rs;

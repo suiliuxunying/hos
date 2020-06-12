@@ -118,7 +118,7 @@ public class HosController extends BaseController {
     return getError(500,"PERMISSION DENIED");
   }
 
-  @RequestMapping(value = "bucket", method = RequestMethod.GET)
+  @RequestMapping(value = "bucket", method = RequestMethod.GET) //dy name 
   public Object getBucket(@RequestParam(name = "bucket") String bucket) {
     UserInfo currentUser = ContextUtil.getCurrentUser();
     BucketModel bucketModel = bucketService.getBucketByName(bucket);
@@ -130,7 +130,7 @@ public class HosController extends BaseController {
 
   }
 
-  @RequestMapping(value = "bucket/list", method = RequestMethod.GET)
+  @RequestMapping(value = "bucket/list", method = RequestMethod.GET)//dy token
   public Object getBucket() {
     UserInfo currentUser = ContextUtil.getCurrentUser();
     List<BucketModel> bucketModels = bucketService.getUserBuckets(currentUser.getUserId());
